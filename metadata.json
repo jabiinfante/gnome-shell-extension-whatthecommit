@@ -1,0 +1,19 @@
+{
+    "uuid": "Whatthecommit@jabi.irontec.com",
+    "description": "Copy on your clipboard a random commit message from whatthecommit.com.",
+    "shell-version": [
+        "3.14",
+        "3.16",
+        "3.18",
+        "3.20",
+        "3.22",
+        "3.24",
+        "3.26",
+        "3.28",
+        "3.30"
+    ],
+    "name": "Whatthecommit.com",
+    "url": "https://github.com/jabiinfante/gnome-shell-extension-whatthecommit",
+    "version": 1,
+    "settings-schema": "org.gnome.shell.extensions.whatthecommit"
+}

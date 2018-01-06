@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions-whatthecommit">
+  <schema id="org.gnome.shell.extensions.whatthecommit" path="/org/gnome/shell/extensions/whatthecommit/">
+    <key type="b" name="show-notification-on-message">
+      <default>true</default>
+      <summary>show notification with the copied message</summary>
+      <description>display the just fetched message on a notification message.</description>
+    </key>
+  </schema>
+</schemalist>
