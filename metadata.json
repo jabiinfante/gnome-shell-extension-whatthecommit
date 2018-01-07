@@ -1,6 +1,6 @@
 {
     "uuid": "Whatthecommit@jabi.irontec.com",
-    "description": "Copy on your clipboard a random commit message from whatthecommit.com.",
+    "description": "Copy to clipboard a random commit message from whatthecommit.com.",
     "shell-version": [
         "3.14",
         "3.16",
