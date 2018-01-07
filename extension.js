@@ -23,30 +23,30 @@ const Whatthecommit = new Lang.Class({
   _init: function() {
     this.parent(0, "Whatthecommit");
 
+    this.reactive = true;
+    this.can_focus = true;
+    this.x_fill =  true;
+    this.y_fill = false;
+    this.track_hover = true;
+
     /**
      * Load whatthecommit scheme settings
      */
     this._settings = Convenience.getSettings();
-    this._settings.connect(
-      "changed",
-      Lang.bind(this, this._loadExtensionSettings)
-    );
 
     /**
      * ui
      */
     let _topBox = new St.BoxLayout();
-    let gicon = Gio.icon_new_for_string("media-view-subtitles-symbolic");
+    
+    this.gicon = Gio.icon_new_for_string(Me.path + "/icons/git-commit.svg");
+    this.gicon_loading = Gio.icon_new_for_string(Me.path + "/icons/git-commit-loading.svg");
+
     this.icon = new St.Icon({
-      gicon: gicon,
+      gicon: this.gicon,
       style_class: "system-status-icon"
     });
     _topBox.add_child(this.icon);
-    this.txt = new St.Label({
-      style_class: "badge",
-      y_align: Clutter.ActorAlign.CENTER
-    });
-    _topBox.add_child(this.txt);
     this.actor.add_actor(_topBox);
 
     this.actor.connect(
@@ -54,12 +54,14 @@ const Whatthecommit = new Lang.Class({
       Lang.bind(this, this.copyCommitMessage)
     );
   },
-  copyCommitMessage: function() {
-    let _httpSession = new Soup.Session();
+  copyCommitMessage: function(e) {
+
+    const _httpSession = new Soup.Session();
     _httpSession.user_agent =
       "gnome-shell-extension whatthecommit.com using libsoup";
 
     let message = Soup.form_request_new_from_hash("GET", WTC_URL, {});
+    this.icon.gicon = this.gicon_loading;
 
     _httpSession.queue_message(
       message,
@@ -67,16 +69,34 @@ const Whatthecommit = new Lang.Class({
         if (message.status_code == 200) {
           const json = JSON.parse(message.response_body.data);
           const wtc_message = json['commit_message'];
-          Clipboard.set_text(St.ClipboardType.CLIPBOARD, wtc_message);
-          
+          Clipboard.set_text(St.ClipboardType.CLIPBOARD, this._prepareMessage(wtc_message));
+          this.icon.gicon = this.gicon;
+          if (this._settings.get_boolean("show-notification-on-message")) {
+            Main.notify(wtc_message); 
+          }
         } else {
-          state = { temp: "-/-", from: "Connection error..." };
-          log(state);
+          Main.notify("Connection error... Try again later."); 
         }
       })
     );
   },
-  _loadExtensionSettings: function() {}
+  _prepareMessage: function(msg) {
+    const include_m = this._settings.get_boolean('include-m');
+    let quote = this._settings.get_string('quotes');
+    let prefix = '';
+    if (include_m) {
+      prefix = ' -m';
+      if (quote === '') {
+        quote = "'";
+      }
+    }
+    
+    if (quote === '') {
+      return msg;
+    }
+    msg = msg.replace(quote,"\\" + quote);
+    return prefix + quote + msg + quote;
+  }
 });
 
 function init() {}
